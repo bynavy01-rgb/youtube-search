@@ -2,8 +2,18 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="영상분석">
     <title>유튜브 영상 분석기 - 제이님 전용</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23667eea'/%3E%3Cpath d='M256 150c-58 0-105 47-105 105s47 105 105 105 105-47 105-105-47-105-105-105zm0 170c-36 0-65-29-65-65s29-65 65-65 65 29 65 65-29 65-65 65z' fill='white'/%3E%3Cpath d='M330 200l-50 30v-60z' fill='%23ff0000'/%3E%3Ccircle cx='330' cy='220' r='8' fill='white'/%3E%3Cpath d='M180 280h30v20h-30zm40 0h30v20h-30zm40 0h30v20h-30z' fill='white'/%3E%3C/svg%3E">
     
     <!-- 🎨 스타일 (디자인) -->
     <style>
@@ -11,158 +21,354 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5568d3;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --danger: #ff0000;
+            --success: #10b981;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f9fafb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
         body {
-            font-family: 'Malgun Gothic', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1400px;
+        .app-container {
+            max-width: 100%;
             margin: 0 auto;
+            padding: 16px;
+            padding-bottom: calc(16px + env(safe-area-inset-bottom));
         }
 
-        .card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        /* 🎨 헤더 디자인 */
+        .header {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
         }
 
-        h1 {
-            color: #333;
-            font-size: 32px;
-            margin-bottom: 10px;
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+        }
+
+        .header-content {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 16px;
         }
 
-        .subtitle {
-            color: #666;
+        .app-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: var(--shadow);
+            flex-shrink: 0;
+        }
+
+        .header-text h1 {
+            color: var(--text-dark);
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .header-text p {
+            color: var(--text-light);
             font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* 🎴 카드 스타일 */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:active {
+            transform: scale(0.98);
+        }
+
+        /* 📝 입력 필드 */
+        .input-group {
             margin-bottom: 20px;
         }
 
-        .input-group {
-            margin-bottom: 15px;
+        .input-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-size: 15px;
         }
 
-        label {
-            display: block;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        input[type="text"],
-        input[type="password"],
-        select {
+        .input-field {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: var(--bg-light);
+            font-family: inherit;
         }
 
-        input:focus,
-        select:focus {
+        .input-field:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
         }
 
+        .help-text {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 🔍 검색 영역 */
         .search-container {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 16px;
         }
 
         .search-container input {
             flex: 1;
         }
 
-        button {
-            background: #ff0000;
+        /* 🎯 버튼 */
+        .btn {
+            background: linear-gradient(135deg, var(--danger) 0%, #cc0000 100%);
             color: white;
             border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
+            padding: 14px 24px;
+            border-radius: 12px;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            white-space: nowrap;
         }
 
-        button:hover {
-            background: #cc0000;
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 0, 0, 0.4);
         }
 
-        button:disabled {
-            background: #ccc;
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #d1d5db;
+            box-shadow: none;
             cursor: not-allowed;
         }
 
-        .filters {
+        /* 🎛️ 필터 그리드 */
+        .filters-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
         }
 
+        @media (max-width: 640px) {
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            background: var(--bg-light);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        /* ⚠️ 알림 */
         .alert {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .alert-error {
-            background: #fee;
-            border: 2px solid #fcc;
-            color: #c00;
+            background: #fef2f2;
+            border: 2px solid #fecaca;
+            color: #991b1b;
         }
 
         .alert-info {
-            background: #e3f2fd;
-            border: 2px solid #90caf9;
-            color: #1976d2;
+            background: #eff6ff;
+            border: 2px solid #bfdbfe;
+            color: #1e40af;
         }
 
+        .alert-success {
+            background: #f0fdf4;
+            border: 2px solid #bbf7d0;
+            color: #166534;
+        }
+
+        /* ⏳ 로딩 */
         .loading {
             text-align: center;
-            padding: 40px;
-            font-size: 18px;
-            color: #667eea;
+            padding: 60px 20px;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #e5e7eb;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 16px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        /* 📊 결과 테이블 */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .results-header h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .results-count {
+            background: var(--primary);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
         }
 
         .results-table {
             width: 100%;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
             width: 100%;
-            border-collapse: collapse;
-            min-width: 1300px;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 1200px;
         }
 
         thead {
-            background: #f5f5f5;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         th {
-            padding: 12px 8px;
+            padding: 14px 12px;
             text-align: left;
-            font-size: 12px;
-            font-weight: bold;
-            color: #333;
-            border-bottom: 3px solid #ddd;
+            font-size: 13px;
+            font-weight: 700;
             white-space: nowrap;
+            letter-spacing: 0.3px;
+        }
+
+        th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        th:last-child {
+            border-top-right-radius: 12px;
         }
 
         th.text-right {
@@ -174,44 +380,63 @@
         }
 
         td {
-            padding: 12px 8px;
-            border-bottom: 1px solid #eee;
+            padding: 14px 12px;
+            border-bottom: 1px solid #f3f4f6;
             font-size: 13px;
         }
 
-        tr:hover {
-            background: #f9f9f9;
+        tbody tr {
+            background: white;
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 12px;
+        }
+
+        tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 12px;
         }
 
         .thumbnail {
             width: 120px;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: opacity 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .thumbnail:hover {
-            opacity: 0.8;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
         .video-title {
-            color: #1976d2;
+            color: var(--primary);
             text-decoration: none;
             display: block;
-            max-width: 250px;
+            max-width: 280px;
+            font-weight: 600;
+            transition: color 0.2s;
         }
 
         .video-title:hover {
+            color: var(--primary-dark);
             text-decoration: underline;
         }
 
         .number {
-            font-weight: bold;
+            font-weight: 700;
+            color: var(--text-dark);
         }
 
         .percentage {
-            color: #667eea;
-            font-weight: bold;
+            color: var(--primary);
+            font-weight: 700;
         }
 
         .datetime {
@@ -221,107 +446,213 @@
         }
 
         .date-line {
-            color: #333;
+            color: var(--text-dark);
             font-weight: 700;
             margin-bottom: 3px;
         }
 
         .time-line {
-            color: #ff0000;
-            font-weight: 600;
-            font-family: 'Courier New', monospace;
-        }
-
-        .help-text {
+            color: var(--danger);
+            font-weight: 700;
+            font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
             font-size: 12px;
-            color: #666;
-            margin-top: 5px;
         }
 
+        /* 💡 안내 박스 */
         .instruction-box {
-            background: #f0f7ff;
-            border: 2px solid #90caf9;
-            border-radius: 10px;
-            padding: 30px;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 2px solid #93c5fd;
+            border-radius: 20px;
+            padding: 32px 24px;
             text-align: center;
         }
 
         .instruction-box h3 {
-            color: #1976d2;
-            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 24px;
         }
 
         .instruction-list {
             text-align: left;
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 auto;
         }
 
-        .instruction-list p {
-            margin: 10px 0;
+        .instruction-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 16px 0;
             font-size: 15px;
+            color: var(--text-dark);
+            font-weight: 500;
         }
 
-        .emoji {
-            font-size: 20px;
-            margin-right: 8px;
+        .instruction-emoji {
+            font-size: 24px;
+            flex-shrink: 0;
         }
 
+        .install-prompt {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .install-prompt.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        /* 반응형 */
         @media (max-width: 768px) {
-            .filters {
-                grid-template-columns: 1fr;
+            .app-container {
+                padding: 12px;
             }
-            
+
+            .header {
+                padding: 20px;
+            }
+
+            .app-icon {
+                width: 56px;
+                height: 56px;
+                font-size: 28px;
+            }
+
+            .header-text h1 {
+                font-size: 20px;
+            }
+
             .search-container {
                 flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* 다크모드 지원 */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            }
+
+            .card {
+                background: #1e293b;
+                color: white;
+            }
+
+            .header {
+                background: linear-gradient(135deg, rgba(30,41,59,0.95) 0%, rgba(30,41,59,0.9) 100%);
+            }
+
+            .header-text h1,
+            .input-label,
+            .number,
+            .date-line {
+                color: white;
+            }
+
+            .input-field,
+            select {
+                background: #0f172a;
+                border-color: #334155;
+                color: white;
+            }
+
+            tbody tr {
+                background: #1e293b;
+            }
+
+            tbody tr:hover {
+                background: #334155;
+            }
+
+            td {
+                color: #e2e8f0;
+                border-bottom-color: #334155;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="app-container">
         
         <!-- 📌 헤더 -->
-        <div class="card">
-            <h1>
-                <span class="emoji">📊</span>
-                유튜브 영상 분석기
-            </h1>
-            <div class="subtitle">제이님의 채널 운영을 위한 맞춤형 분석 도구</div>
+        <div class="header">
+            <div class="header-content">
+                <div class="app-icon">📊</div>
+                <div class="header-text">
+                    <h1>유튜브 영상 분석기</h1>
+                    <p>제이님의 채널 운영 도구</p>
+                </div>
+            </div>
+            <div id="installPrompt" class="install-prompt">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 24px;">📱</span>
+                    <div>
+                        <div style="font-weight: 700; margin-bottom: 4px;">홈 화면에 추가하세요!</div>
+                        <div style="font-size: 12px; opacity: 0.9;">Safari 공유 버튼 → "홈 화면에 추가"</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 🔑 API 키 입력 -->
         <div class="card">
             <div class="input-group">
-                <label>🔑 YouTube API 키</label>
+                <label class="input-label">
+                    <span>🔑</span>
+                    YouTube API 키
+                </label>
                 <input 
                     type="password" 
                     id="apiKey" 
+                    class="input-field"
                     placeholder="여기에 API 키를 입력하세요"
                 >
-                <div class="help-text">💡 API 키는 브라우저에만 저장되며, 안전합니다</div>
+                <div class="help-text">
+                    <span>💡</span>
+                    API 키는 안전하게 기기에만 저장됩니다
+                </div>
             </div>
         </div>
 
         <!-- 🔍 검색 섹션 -->
         <div class="card">
             <div class="input-group">
-                <label>🔍 검색어</label>
+                <label class="input-label">
+                    <span>🔍</span>
+                    검색어
+                </label>
                 <div class="search-container">
                     <input 
                         type="text" 
                         id="searchKeyword" 
+                        class="input-field"
                         placeholder="예: 건강정보, 노인 운동, 한국 역사"
                         onkeypress="if(event.key==='Enter') searchVideos()"
                     >
-                    <button onclick="searchVideos()" id="searchBtn">검색</button>
+                    <button onclick="searchVideos()" id="searchBtn" class="btn">
+                        <span>🔍</span>
+                        검색
+                    </button>
                 </div>
             </div>
 
             <!-- 필터 옵션들 -->
-            <div class="filters">
+            <div class="filters-grid">
                 <div class="input-group">
-                    <label>📅 업로드 날짜</label>
+                    <label class="input-label">📅 업로드 날짜</label>
                     <select id="uploadDate">
                         <option value="any">전체</option>
                         <option value="today">오늘</option>
@@ -332,7 +663,7 @@
                 </div>
 
                 <div class="input-group">
-                    <label>⏱️ 영상 길이</label>
+                    <label class="input-label">⏱️ 영상 길이</label>
                     <select id="duration">
                         <option value="any">전체</option>
                         <option value="short">짧음 (4분 미만)</option>
@@ -342,7 +673,7 @@
                 </div>
 
                 <div class="input-group">
-                    <label>📈 정렬 기준</label>
+                    <label class="input-label">📈 정렬 기준</label>
                     <select id="sortBy">
                         <option value="relevance">관련성</option>
                         <option value="date">최신순</option>
@@ -352,7 +683,7 @@
                 </div>
 
                 <div class="input-group">
-                    <label>🔢 결과 수</label>
+                    <label class="input-label">🔢 결과 수</label>
                     <select id="maxResults">
                         <option value="10">10개</option>
                         <option value="25">25개</option>
@@ -372,12 +703,30 @@
 
     <!-- 🔧 JavaScript (기능 코드) -->
     <script>
+        // PWA 서비스 워커 등록
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker 등록 성공'))
+                    .catch(err => console.log('Service Worker 등록 실패', err));
+            });
+        }
+
+        // iOS 설치 안내 표시
+        let isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        let isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
+
+        if (isIOS && !isInStandaloneMode) {
+            setTimeout(() => {
+                document.getElementById('installPrompt').classList.add('show');
+            }, 2000);
+        }
+
         // 🔍 유튜브 영상 검색 함수
         async function searchVideos() {
             const apiKey = document.getElementById('apiKey').value.trim();
             const searchKeyword = document.getElementById('searchKeyword').value.trim();
             
-            // 입력 확인
             if (!apiKey) {
                 showMessage('❌ API 키를 입력해주세요!', 'error');
                 return;
@@ -388,12 +737,13 @@
                 return;
             }
 
-            // 로딩 시작
+            // API 키 저장 (로컬 스토리지)
+            localStorage.setItem('youtube_api_key', apiKey);
+
             showLoading();
             clearMessage();
 
             try {
-                // 필터 값 가져오기
                 const uploadDate = document.getElementById('uploadDate').value;
                 const duration = document.getElementById('duration').value;
                 const sortBy = document.getElementById('sortBy').value;
@@ -448,7 +798,7 @@
                         title: video.snippet.title,
                         channelTitle: video.snippet.channelTitle,
                         thumbnail: video.snippet.thumbnails.medium.url,
-                        publishedAt: video.snippet.publishedAt, // ISO 형식 그대로 저장
+                        publishedAt: video.snippet.publishedAt,
                         viewCount: views,
                         likeCount: likes,
                         commentCount: comments,
@@ -459,8 +809,8 @@
                     };
                 });
 
-                // 5️⃣ 결과 표시
                 displayResults(videos);
+                showMessage(`✅ ${videos.length}개의 영상을 찾았습니다!`, 'success');
 
             } catch (error) {
                 showMessage(`❌ 오류 발생: ${error.message}`, 'error');
@@ -468,7 +818,7 @@
             }
         }
 
-        // 📅 업로드 날짜 필터에 따른 날짜 계산
+        // 📅 업로드 날짜 필터
         function getPublishedAfterDate(filter) {
             const now = new Date();
             switch(filter) {
@@ -485,34 +835,28 @@
                     now.setFullYear(now.getFullYear() - 1);
                     return now.toISOString();
                 default:
-                    return '2005-01-01T00:00:00Z'; // YouTube 시작일
+                    return '2005-01-01T00:00:00Z';
             }
         }
 
-        // 🕐 ISO 날짜를 "날짜 + 시간" 형식으로 변환
+        // 🕐 날짜/시간 포맷팅
         function formatDateTime(isoString) {
             const date = new Date(isoString);
             
-            // 날짜 형식: 2024-11-28
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
             const dateStr = `${year}-${month}-${day}`;
             
-            // 시간 형식: 14:30:45
             const hours = String(date.getHours()).padStart(2, '0');
             const minutes = String(date.getMinutes()).padStart(2, '0');
             const seconds = String(date.getSeconds()).padStart(2, '0');
             const timeStr = `${hours}:${minutes}:${seconds}`;
             
-            return {
-                date: dateStr,
-                time: timeStr,
-                full: `${dateStr} ${timeStr}`
-            };
+            return { date: dateStr, time: timeStr };
         }
 
-        // ⏱️ YouTube 시간 형식을 "시:분:초" 형식으로 변환
+        // ⏱️ 시간 파싱
         function parseDuration(duration) {
             const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
             const hours = (match[1] || '').replace('H', '') || 0;
@@ -525,21 +869,17 @@
             return `${minutes}:${String(seconds).padStart(2, '0')}`;
         }
 
-        // 📊 참여율 계산 (좋아요 + 댓글) / 조회수 * 100
+        // 📊 계산 함수들
         function calculateEngagementRate(views, likes, comments) {
             if (!views || views === 0) return '0.00';
-            const rate = ((likes + comments) / views) * 100;
-            return rate.toFixed(2);
+            return (((likes + comments) / views) * 100).toFixed(2);
         }
 
-        // 📈 채널 기여도 계산 = 조회수 / 구독자 수 * 100
         function calculateChannelContribution(views, subscribers) {
             if (!subscribers || subscribers === 0) return '0.00';
-            const contribution = (views / subscribers) * 100;
-            return contribution.toFixed(2);
+            return ((views / subscribers) * 100).toFixed(2);
         }
 
-        // 🔢 숫자 포맷팅 (천 단위 콤마)
         function formatNumber(num) {
             return num.toLocaleString('ko-KR');
         }
@@ -550,7 +890,10 @@
             
             let html = `
                 <div class="card">
-                    <h2 style="margin-bottom: 20px;">검색 결과: ${videos.length}개</h2>
+                    <div class="results-header">
+                        <h2>검색 결과</h2>
+                        <div class="results-count">${videos.length}개</div>
+                    </div>
                     <div class="results-table">
                         <table>
                             <thead>
@@ -604,24 +947,17 @@
                 `;
             });
 
-            html += `
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-
+            html += '</tbody></table></div></div>';
             resultsArea.innerHTML = html;
         }
 
         // 💬 메시지 표시
         function showMessage(message, type) {
             const messageArea = document.getElementById('messageArea');
-            const className = type === 'error' ? 'alert-error' : 'alert-info';
-            messageArea.innerHTML = `<div class="alert ${className}">${message}</div>`;
+            const emoji = type === 'error' ? '⚠️' : type === 'success' ? '✅' : 'ℹ️';
+            messageArea.innerHTML = `<div class="alert alert-${type}"><span style="font-size: 20px;">${emoji}</span>${message}</div>`;
         }
 
-        // 🧹 메시지 지우기
         function clearMessage() {
             document.getElementById('messageArea').innerHTML = '';
         }
@@ -629,28 +965,48 @@
         // ⏳ 로딩 표시
         function showLoading() {
             const resultsArea = document.getElementById('resultsArea');
-            resultsArea.innerHTML = '<div class="card loading">🔍 검색 중입니다... 잠시만 기다려주세요!</div>';
+            resultsArea.innerHTML = `
+                <div class="card loading">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">검색 중입니다... 잠시만 기다려주세요! 🔍</div>
+                </div>
+            `;
         }
 
-        // 🧹 결과 지우기
         function clearResults() {
             document.getElementById('resultsArea').innerHTML = '';
         }
 
-        // 📖 초기 안내 메시지 표시
+        // 📖 초기 화면
         window.onload = function() {
+            // 저장된 API 키 불러오기
+            const savedApiKey = localStorage.getItem('youtube_api_key');
+            if (savedApiKey) {
+                document.getElementById('apiKey').value = savedApiKey;
+            }
+
+            // 안내 메시지 표시
             const resultsArea = document.getElementById('resultsArea');
             resultsArea.innerHTML = `
                 <div class="instruction-box">
                     <h3>💡 사용 방법</h3>
                     <div class="instruction-list">
-                        <p><span class="emoji">1️⃣</span> 위에 YouTube API 키를 입력하세요</p>
-                        <p><span class="emoji">2️⃣</span> 검색어를 입력하세요 (예: "건강정보 시니어")</p>
-                        <p><span class="emoji">3️⃣</span> 필터를 설정하세요 (업로드 날짜, 길이, 정렬 등)</p>
-                        <p><span class="emoji">4️⃣</span> 검색 버튼을 누르세요!</p>
-                        <p style="margin-top: 20px; color: #666; font-size: 13px;">
-                            ✨ 이 도구로 경쟁 채널을 분석하고, 인기 콘텐츠 트렌드를 파악할 수 있어요!
-                        </p>
+                        <div class="instruction-item">
+                            <span class="instruction-emoji">1️⃣</span>
+                            YouTube API 키를 입력하세요
+                        </div>
+                        <div class="instruction-item">
+                            <span class="instruction-emoji">2️⃣</span>
+                            검색어를 입력하세요 (예: "건강정보 시니어")
+                        </div>
+                        <div class="instruction-item">
+                            <span class="instruction-emoji">3️⃣</span>
+                            필터를 설정하세요 (날짜, 길이, 정렬)
+                        </div>
+                        <div class="instruction-item">
+                            <span class="instruction-emoji">4️⃣</span>
+                            검색 버튼을 누르세요!
+                        </div>
                     </div>
                 </div>
             `;
