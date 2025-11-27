@@ -21,261 +21,133 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        :root {
-            --primary: #667eea;
-            --primary-dark: #5568d3;
-            --secondary: #764ba2;
-            --accent: #f093fb;
-            --danger: #ff0000;
-            --success: #10b981;
-            --text-dark: #1f2937;
-            --text-light: #6b7280;
-            --bg-light: #f9fafb;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            font-family: 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-            overflow-x: hidden;
+            padding: 20px;
         }
 
-        .app-container {
-            max-width: 100%;
+        .container {
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 16px;
-            padding-bottom: calc(16px + env(safe-area-inset-bottom));
         }
 
-        /* 🎨 헤더 디자인 */
-        .header {
-            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 16px;
-            box-shadow: var(--shadow-lg);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .app-icon {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            box-shadow: var(--shadow);
-            flex-shrink: 0;
-        }
-
-        .header-text h1 {
-            color: var(--text-dark);
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 4px;
-            letter-spacing: -0.5px;
-        }
-
-        .header-text p {
-            color: var(--text-light);
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        /* 🎴 카드 스타일 */
         .card {
             background: white;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: var(--shadow);
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
-        .card:active {
-            transform: scale(0.98);
+        h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        /* 📝 입력 필드 */
-        .input-group {
+        .subtitle {
+            color: #666;
+            font-size: 14px;
             margin-bottom: 20px;
         }
 
-        .input-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-            font-size: 15px;
+        .input-group {
+            margin-bottom: 15px;
         }
 
-        .input-field {
+        label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select {
             width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 15px;
-            transition: all 0.3s;
-            background: var(--bg-light);
-            font-family: inherit;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: var(--primary);
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
             background: white;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            color: #333;
         }
 
-        .help-text {
-            font-size: 13px;
-            color: var(--text-light);
-            margin-top: 8px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
         }
 
-        /* 🔍 검색 영역 */
+        input::placeholder {
+            color: #999;
+        }
+
         .search-container {
             display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
         .search-container input {
             flex: 1;
         }
 
-        /* 🎯 버튼 */
-        .btn {
-            background: linear-gradient(135deg, var(--danger) 0%, #cc0000 100%);
+        button {
+            background: #ff0000;
             color: white;
             border: none;
-            padding: 14px 24px;
-            border-radius: 12px;
+            padding: 12px 30px;
+            border-radius: 8px;
             font-size: 16px;
-            font-weight: 700;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            white-space: nowrap;
+            transition: background 0.3s;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(255, 0, 0, 0.4);
+        button:hover {
+            background: #cc0000;
         }
 
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn:disabled {
-            background: #d1d5db;
-            box-shadow: none;
+        button:disabled {
+            background: #ccc;
             cursor: not-allowed;
         }
 
-        /* 🎛️ 필터 그리드 */
-        .filters-grid {
+        .filters {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
         }
 
-        @media (max-width: 640px) {
-            .filters-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        select {
-            width: 100%;
-            padding: 12px 14px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 14px;
-            background: var(--bg-light);
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-
-        select:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-        }
-
-        /* ⚠️ 알림 */
         .alert {
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
         }
 
         .alert-error {
-            background: #fef2f2;
-            border: 2px solid #fecaca;
-            color: #991b1b;
+            background: #fee;
+            border: 2px solid #fcc;
+            color: #c00;
         }
 
         .alert-info {
-            background: #eff6ff;
-            border: 2px solid #bfdbfe;
-            color: #1e40af;
+            background: #e3f2fd;
+            border: 2px solid #90caf9;
+            color: #1976d2;
         }
 
         .alert-success {
@@ -284,91 +156,36 @@
             color: #166534;
         }
 
-        /* ⏳ 로딩 */
         .loading {
             text-align: center;
-            padding: 60px 20px;
-        }
-
-        .loading-spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid #e5e7eb;
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            font-size: 16px;
-            color: var(--text-light);
-            font-weight: 600;
-        }
-
-        /* 📊 결과 테이블 */
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .results-header h2 {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .results-count {
-            background: var(--primary);
-            color: white;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 700;
+            padding: 40px;
+            font-size: 18px;
+            color: #667eea;
         }
 
         .results-table {
             width: 100%;
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            min-width: 1200px;
+            border-collapse: collapse;
+            min-width: 1300px;
         }
 
         thead {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            background: #f5f5f5;
         }
 
         th {
-            padding: 14px 12px;
+            padding: 12px 8px;
             text-align: left;
-            font-size: 13px;
-            font-weight: 700;
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 3px solid #ddd;
             white-space: nowrap;
-            letter-spacing: 0.3px;
-        }
-
-        th:first-child {
-            border-top-left-radius: 12px;
-        }
-
-        th:last-child {
-            border-top-right-radius: 12px;
         }
 
         th.text-right {
@@ -380,63 +197,39 @@
         }
 
         td {
-            padding: 14px 12px;
-            border-bottom: 1px solid #f3f4f6;
+            padding: 12px 8px;
+            border-bottom: 1px solid #eee;
             font-size: 13px;
         }
 
-        tbody tr {
-            background: white;
-            transition: background 0.2s;
-        }
-
-        tbody tr:hover {
-            background: #f9fafb;
-        }
-
-        tbody tr:last-child td:first-child {
-            border-bottom-left-radius: 12px;
-        }
-
-        tbody tr:last-child td:last-child {
-            border-bottom-right-radius: 12px;
+        tr:hover {
+            background: #f9f9f9;
         }
 
         .thumbnail {
             width: 120px;
-            border-radius: 8px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: opacity 0.3s;
         }
 
         .thumbnail:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            opacity: 0.8;
         }
 
         .video-title {
-            color: var(--primary);
+            color: #1976d2;
             text-decoration: none;
             display: block;
             max-width: 280px;
-            font-weight: 600;
-            transition: color 0.2s;
         }
 
         .video-title:hover {
-            color: var(--primary-dark);
             text-decoration: underline;
         }
 
         .number {
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .percentage {
-            color: var(--primary);
-            font-weight: 700;
+            font-weight: bold;
         }
 
         .datetime {
@@ -446,213 +239,150 @@
         }
 
         .date-line {
-            color: var(--text-dark);
+            color: #333;
             font-weight: 700;
             margin-bottom: 3px;
         }
 
         .time-line {
-            color: var(--danger);
+            color: #ff0000;
             font-weight: 700;
-            font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+            font-family: 'Courier New', monospace;
             font-size: 12px;
         }
 
-        /* 💡 안내 박스 */
+        .hashtags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            max-width: 350px;
+        }
+
+        .hashtag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .no-hashtags {
+            color: #999;
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
         .instruction-box {
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            border: 2px solid #93c5fd;
-            border-radius: 20px;
-            padding: 32px 24px;
+            background: #f0f7ff;
+            border: 2px solid #90caf9;
+            border-radius: 10px;
+            padding: 30px;
             text-align: center;
         }
 
         .instruction-box h3 {
-            color: var(--primary);
-            font-size: 20px;
-            font-weight: 800;
-            margin-bottom: 24px;
+            color: #1976d2;
+            margin-bottom: 20px;
         }
 
         .instruction-list {
             text-align: left;
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
         }
 
-        .instruction-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 16px 0;
+        .instruction-list p {
+            margin: 10px 0;
             font-size: 15px;
-            color: var(--text-dark);
-            font-weight: 500;
         }
 
-        .instruction-emoji {
-            font-size: 24px;
-            flex-shrink: 0;
+        .emoji {
+            font-size: 20px;
+            margin-right: 8px;
         }
 
         .install-prompt {
-            background: linear-gradient(135deg, var(--success), #059669);
+            background: #10b981;
             color: white;
-            padding: 16px;
-            border-radius: 12px;
-            margin-top: 24px;
-            font-size: 14px;
-            font-weight: 600;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 13px;
             display: none;
         }
 
         .install-prompt.show {
             display: block;
-            animation: slideIn 0.5s ease-out;
         }
 
-        /* 반응형 */
         @media (max-width: 768px) {
-            .app-container {
-                padding: 12px;
+            .filters {
+                grid-template-columns: 1fr;
             }
-
-            .header {
-                padding: 20px;
-            }
-
-            .app-icon {
-                width: 56px;
-                height: 56px;
-                font-size: 28px;
-            }
-
-            .header-text h1 {
-                font-size: 20px;
-            }
-
+            
             .search-container {
                 flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-            }
-        }
-
-        /* 다크모드 지원 */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            }
-
-            .card {
-                background: #1e293b;
-                color: white;
-            }
-
-            .header {
-                background: linear-gradient(135deg, rgba(30,41,59,0.95) 0%, rgba(30,41,59,0.9) 100%);
-            }
-
-            .header-text h1,
-            .input-label,
-            .number,
-            .date-line {
-                color: white;
-            }
-
-            .input-field,
-            select {
-                background: #0f172a;
-                border-color: #334155;
-                color: white;
-            }
-
-            tbody tr {
-                background: #1e293b;
-            }
-
-            tbody tr:hover {
-                background: #334155;
-            }
-
-            td {
-                color: #e2e8f0;
-                border-bottom-color: #334155;
             }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
+    <div class="container">
         
         <!-- 📌 헤더 -->
-        <div class="header">
-            <div class="header-content">
-                <div class="app-icon">📊</div>
-                <div class="header-text">
-                    <h1>유튜브 영상 분석기</h1>
-                    <p>제이님의 채널 운영 도구</p>
-                </div>
-            </div>
+        <div class="card">
+            <h1>
+                <span class="emoji">📊</span>
+                유튜브 영상 분석기
+            </h1>
+            <div class="subtitle">제이님의 채널 운영을 위한 맞춤형 분석 도구</div>
+            
             <div id="installPrompt" class="install-prompt">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <span style="font-size: 24px;">📱</span>
-                    <div>
-                        <div style="font-weight: 700; margin-bottom: 4px;">홈 화면에 추가하세요!</div>
-                        <div style="font-size: 12px; opacity: 0.9;">Safari 공유 버튼 → "홈 화면에 추가"</div>
-                    </div>
-                </div>
+                📱 <strong>홈 화면에 추가하세요!</strong><br>
+                Safari 공유 버튼 → "홈 화면에 추가"
             </div>
         </div>
 
         <!-- 🔑 API 키 입력 -->
         <div class="card">
             <div class="input-group">
-                <label class="input-label">
-                    <span>🔑</span>
-                    YouTube API 키
-                </label>
+                <label>🔑 YouTube API 키</label>
                 <input 
                     type="password" 
                     id="apiKey" 
-                    class="input-field"
                     placeholder="여기에 API 키를 입력하세요"
                 >
-                <div class="help-text">
-                    <span>💡</span>
-                    API 키는 안전하게 기기에만 저장됩니다
-                </div>
+                <div class="help-text">💡 API 키는 브라우저에만 저장되며, 안전합니다</div>
             </div>
         </div>
 
         <!-- 🔍 검색 섹션 -->
         <div class="card">
             <div class="input-group">
-                <label class="input-label">
-                    <span>🔍</span>
-                    검색어
-                </label>
+                <label>🔍 검색어</label>
                 <div class="search-container">
                     <input 
                         type="text" 
                         id="searchKeyword" 
-                        class="input-field"
                         placeholder="예: 건강정보, 노인 운동, 한국 역사"
                         onkeypress="if(event.key==='Enter') searchVideos()"
                     >
-                    <button onclick="searchVideos()" id="searchBtn" class="btn">
-                        <span>🔍</span>
-                        검색
-                    </button>
+                    <button onclick="searchVideos()" id="searchBtn">검색</button>
                 </div>
             </div>
 
             <!-- 필터 옵션들 -->
-            <div class="filters-grid">
+            <div class="filters">
                 <div class="input-group">
-                    <label class="input-label">📅 업로드 날짜</label>
+                    <label>📅 업로드 날짜</label>
                     <select id="uploadDate">
                         <option value="any">전체</option>
                         <option value="today">오늘</option>
@@ -663,7 +393,7 @@
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label">⏱️ 영상 길이</label>
+                    <label>⏱️ 영상 길이</label>
                     <select id="duration">
                         <option value="any">전체</option>
                         <option value="short">짧음 (4분 미만)</option>
@@ -673,7 +403,7 @@
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label">📈 정렬 기준</label>
+                    <label>📈 정렬 기준</label>
                     <select id="sortBy">
                         <option value="relevance">관련성</option>
                         <option value="date">최신순</option>
@@ -683,7 +413,7 @@
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label">🔢 결과 수</label>
+                    <label>🔢 결과 수</label>
                     <select id="maxResults">
                         <option value="10">10개</option>
                         <option value="25">25개</option>
@@ -737,7 +467,7 @@
                 return;
             }
 
-            // API 키 저장 (로컬 스토리지)
+            // API 키 저장
             localStorage.setItem('youtube_api_key', apiKey);
 
             showLoading();
@@ -793,6 +523,10 @@
                     const comments = parseInt(video.statistics.commentCount || 0);
                     const subscribers = parseInt(channelStats.subscriberCount || 0);
 
+                    // 해시태그 추출 (최대 5개)
+                    const tags = video.snippet.tags || [];
+                    const hashtags = tags.slice(0, 5);
+
                     return {
                         id: video.id,
                         title: video.snippet.title,
@@ -804,8 +538,7 @@
                         commentCount: comments,
                         subscriberCount: subscribers,
                         duration: parseDuration(video.contentDetails.duration),
-                        engagementRate: calculateEngagementRate(views, likes, comments),
-                        channelContribution: calculateChannelContribution(views, subscribers)
+                        hashtags: hashtags
                     };
                 });
 
@@ -869,17 +602,7 @@
             return `${minutes}:${String(seconds).padStart(2, '0')}`;
         }
 
-        // 📊 계산 함수들
-        function calculateEngagementRate(views, likes, comments) {
-            if (!views || views === 0) return '0.00';
-            return (((likes + comments) / views) * 100).toFixed(2);
-        }
-
-        function calculateChannelContribution(views, subscribers) {
-            if (!subscribers || subscribers === 0) return '0.00';
-            return ((views / subscribers) * 100).toFixed(2);
-        }
-
+        // 🔢 숫자 포맷팅
         function formatNumber(num) {
             return num.toLocaleString('ko-KR');
         }
@@ -890,10 +613,7 @@
             
             let html = `
                 <div class="card">
-                    <div class="results-header">
-                        <h2>검색 결과</h2>
-                        <div class="results-count">${videos.length}개</div>
-                    </div>
+                    <h2 style="margin-bottom: 20px;">검색 결과: ${videos.length}개</h2>
                     <div class="results-table">
                         <table>
                             <thead>
@@ -905,11 +625,10 @@
                                     <th>업로드 날짜 및 시간</th>
                                     <th class="text-right">구독자</th>
                                     <th class="text-right">조회수</th>
-                                    <th class="text-right">채널 기여도</th>
                                     <th class="text-center">길이</th>
                                     <th class="text-right">좋아요</th>
                                     <th class="text-right">댓글</th>
-                                    <th class="text-right">참여율</th>
+                                    <th>해시태그 (최대 5개)</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -917,6 +636,18 @@
 
             videos.forEach((video, index) => {
                 const dateTime = formatDateTime(video.publishedAt);
+                
+                // 해시태그 HTML 생성
+                let hashtagsHtml = '';
+                if (video.hashtags.length > 0) {
+                    hashtagsHtml = '<div class="hashtags">';
+                    video.hashtags.forEach(tag => {
+                        hashtagsHtml += `<span class="hashtag">#${tag}</span>`;
+                    });
+                    hashtagsHtml += '</div>';
+                } else {
+                    hashtagsHtml = '<span class="no-hashtags">해시태그 없음</span>';
+                }
                 
                 html += `
                     <tr>
@@ -938,24 +669,29 @@
                         </td>
                         <td class="text-right number">${formatNumber(video.subscriberCount)}</td>
                         <td class="text-right number">${formatNumber(video.viewCount)}</td>
-                        <td class="text-right percentage">${video.channelContribution}%</td>
                         <td class="text-center">${video.duration}</td>
                         <td class="text-right">${formatNumber(video.likeCount)}</td>
                         <td class="text-right">${formatNumber(video.commentCount)}</td>
-                        <td class="text-right percentage">${video.engagementRate}%</td>
+                        <td>${hashtagsHtml}</td>
                     </tr>
                 `;
             });
 
-            html += '</tbody></table></div></div>';
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
             resultsArea.innerHTML = html;
         }
 
         // 💬 메시지 표시
         function showMessage(message, type) {
             const messageArea = document.getElementById('messageArea');
-            const emoji = type === 'error' ? '⚠️' : type === 'success' ? '✅' : 'ℹ️';
-            messageArea.innerHTML = `<div class="alert alert-${type}"><span style="font-size: 20px;">${emoji}</span>${message}</div>`;
+            const className = type === 'error' ? 'alert-error' : type === 'success' ? 'alert-success' : 'alert-info';
+            messageArea.innerHTML = `<div class="alert ${className}">${message}</div>`;
         }
 
         function clearMessage() {
@@ -965,12 +701,7 @@
         // ⏳ 로딩 표시
         function showLoading() {
             const resultsArea = document.getElementById('resultsArea');
-            resultsArea.innerHTML = `
-                <div class="card loading">
-                    <div class="loading-spinner"></div>
-                    <div class="loading-text">검색 중입니다... 잠시만 기다려주세요! 🔍</div>
-                </div>
-            `;
+            resultsArea.innerHTML = '<div class="card loading">🔍 검색 중입니다... 잠시만 기다려주세요!</div>';
         }
 
         function clearResults() {
@@ -991,22 +722,13 @@
                 <div class="instruction-box">
                     <h3>💡 사용 방법</h3>
                     <div class="instruction-list">
-                        <div class="instruction-item">
-                            <span class="instruction-emoji">1️⃣</span>
-                            YouTube API 키를 입력하세요
-                        </div>
-                        <div class="instruction-item">
-                            <span class="instruction-emoji">2️⃣</span>
-                            검색어를 입력하세요 (예: "건강정보 시니어")
-                        </div>
-                        <div class="instruction-item">
-                            <span class="instruction-emoji">3️⃣</span>
-                            필터를 설정하세요 (날짜, 길이, 정렬)
-                        </div>
-                        <div class="instruction-item">
-                            <span class="instruction-emoji">4️⃣</span>
-                            검색 버튼을 누르세요!
-                        </div>
+                        <p><span class="emoji">1️⃣</span> 위에 YouTube API 키를 입력하세요</p>
+                        <p><span class="emoji">2️⃣</span> 검색어를 입력하세요 (예: "건강정보 시니어")</p>
+                        <p><span class="emoji">3️⃣</span> 필터를 설정하세요 (업로드 날짜, 길이, 정렬 등)</p>
+                        <p><span class="emoji">4️⃣</span> 검색 버튼을 누르세요!</p>
+                        <p style="margin-top: 20px; color: #666; font-size: 13px;">
+                            ✨ 이 도구로 경쟁 채널을 분석하고, 인기 콘텐츠 트렌드를 파악할 수 있어요!
+                        </p>
                     </div>
                 </div>
             `;
