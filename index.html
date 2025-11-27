@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유튜브 영상 분석기 - 제이님 전용</title>
+    
+    <!-- 🎨 스타일 (디자인) -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-container input {
+            flex: 1;
+        }
+
+        button {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #cc0000;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-error {
+            background: #fee;
+            border: 2px solid #fcc;
+            color: #c00;
+        }
+
+        .alert-info {
+            background: #e3f2fd;
+            border: 2px solid #90caf9;
+            color: #1976d2;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #667eea;
+        }
+
+        .results-table {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+
+        thead {
+            background: #f5f5f5;
+        }
+
+        th {
+            padding: 12px 8px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 3px solid #ddd;
+        }
+
+        th.text-right {
+            text-align: right;
+        }
+
+        th.text-center {
+            text-align: center;
+        }
+
+        td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .thumbnail {
+            width: 120px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .thumbnail:hover {
+            opacity: 0.8;
+        }
+
+        .video-title {
+            color: #1976d2;
+            text-decoration: none;
+            display: block;
+            max-width: 250px;
+        }
+
+        .video-title:hover {
+            text-decoration: underline;
+        }
+
+        .number {
+            font-weight: bold;
+        }
+
+        .percentage {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .instruction-box {
+            background: #f0f7ff;
+            border: 2px solid #90caf9;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .instruction-box h3 {
+            color: #1976d2;
+            margin-bottom: 20px;
+        }
+
+        .instruction-list {
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .instruction-list p {
+            margin: 10px 0;
+            font-size: 15px;
+        }
+
+        .emoji {
+            font-size: 20px;
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .filters {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <!-- 📌 헤더 -->
+        <div class="card">
+            <h1>
+                <span class="emoji">📊</span>
+                유튜브 영상 분석기
+            </h1>
+            <div class="subtitle">제이님의 채널 운영을 위한 맞춤형 분석 도구</div>
+        </div>
+
+        <!-- 🔑 API 키 입력 -->
+        <div class="card">
+            <div class="input-group">
+                <label>🔑 YouTube API 키</label>
+                <input 
+                    type="password" 
+                    id="apiKey" 
+                    placeholder="여기에 API 키를 입력하세요"
+                >
+                <div class="help-text">💡 API 키는 브라우저에만 저장되며, 안전합니다</div>
+            </div>
+        </div>
+
+        <!-- 🔍 검색 섹션 -->
+        <div class="card">
+            <div class="input-group">
+                <label>🔍 검색어</label>
+                <div class="search-container">
+                    <input 
+                        type="text" 
+                        id="searchKeyword" 
+                        placeholder="예: 건강정보, 노인 운동, 한국 역사"
+                        onkeypress="if(event.key==='Enter') searchVideos()"
+                    >
+                    <button onclick="searchVideos()" id="searchBtn">검색</button>
+                </div>
+            </div>
+
+            <!-- 필터 옵션들 -->
+            <div class="filters">
+                <div class="input-group">
+                    <label>📅 업로드 날짜</label>
+                    <select id="uploadDate">
+                        <option value="any">전체</option>
+                        <option value="today">오늘</option>
+                        <option value="week">이번 주</option>
+                        <option value="month">이번 달</option>
+                        <option value="year">올해</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>⏱️ 영상 길이</label>
+                    <select id="duration">
+                        <option value="any">전체</option>
+                        <option value="short">짧음 (4분 미만)</option>
+                        <option value="medium">중간 (4-20분)</option>
+                        <option value="long">길음 (20분 이상)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>📈 정렬 기준</label>
+                    <select id="sortBy">
+                        <option value="relevance">관련성</option>
+                        <option value="date">최신순</option>
+                        <option value="viewCount">조회수</option>
+                        <option value="rating">평점</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>🔢 결과 수</label>
+                    <select id="maxResults">
+                        <option value="10">10개</option>
+                        <option value="25">25개</option>
+                        <option value="50">50개</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- ⚠️ 메시지 표시 영역 -->
+        <div id="messageArea"></div>
+
+        <!-- 📊 결과 표시 영역 -->
+        <div id="resultsArea"></div>
+
+    </div>
+
+    <!-- 🔧 JavaScript (기능 코드) -->
+    <script>
+        // 🔍 유튜브 영상 검색 함수
+        async function searchVideos() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const searchKeyword = document.getElementById('searchKeyword').value.trim();
+            
+            // 입력 확인
+            if (!apiKey) {
+                showMessage('❌ API 키를 입력해주세요!', 'error');
+                return;
+            }
+            
+            if (!searchKeyword) {
+                showMessage('❌ 검색어를 입력해주세요!', 'error');
+                return;
+            }
+
+            // 로딩 시작
+            showLoading();
+            clearMessage();
+
+            try {
+                // 필터 값 가져오기
+                const uploadDate = document.getElementById('uploadDate').value;
+                const duration = document.getElementById('duration').value;
+                const sortBy = document.getElementById('sortBy').value;
+                const maxResults = document.getElementById('maxResults').value;
+
+                // 1️⃣ 영상 검색
+                const publishedAfter = getPublishedAfterDate(uploadDate);
+                const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchKeyword)}&type=video&maxResults=${maxResults}&order=${sortBy}&videoDuration=${duration}&publishedAfter=${publishedAfter}&key=${apiKey}`;
+                
+                const searchResponse = await fetch(searchUrl);
+                const searchData = await searchResponse.json();
+                
+                if (searchData.error) {
+                    throw new Error(searchData.error.message);
+                }
+
+                if (!searchData.items || searchData.items.length === 0) {
+                    showMessage('😢 검색 결과가 없습니다. 다른 키워드로 검색해보세요.', 'info');
+                    clearResults();
+                    return;
+                }
+
+                // 2️⃣ 영상 상세 정보 가져오기
+                const videoIds = searchData.items.map(item => item.id.videoId).join(',');
+                const detailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=${videoIds}&key=${apiKey}`;
+                
+                const detailsResponse = await fetch(detailsUrl);
+                const detailsData = await detailsResponse.json();
+
+                // 3️⃣ 채널 정보 가져오기
+                const channelIds = [...new Set(detailsData.items.map(item => item.snippet.channelId))].join(',');
+                const channelsUrl = `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelIds}&key=${apiKey}`;
+                
+                const channelsResponse = await fetch(channelsUrl);
+                const channelsData = await channelsResponse.json();
+
+                // 4️⃣ 데이터 가공
+                const channelMap = {};
+                channelsData.items.forEach(channel => {
+                    channelMap[channel.id] = channel.statistics;
+                });
+
+                const videos = detailsData.items.map(video => {
+                    const channelStats = channelMap[video.snippet.channelId] || {};
+                    const views = parseInt(video.statistics.viewCount || 0);
+                    const likes = parseInt(video.statistics.likeCount || 0);
+                    const comments = parseInt(video.statistics.commentCount || 0);
+                    const subscribers = parseInt(channelStats.subscriberCount || 0);
+
+                    return {
+                        id: video.id,
+                        title: video.snippet.title,
+                        channelTitle: video.snippet.channelTitle,
+                        thumbnail: video.snippet.thumbnails.medium.url,
+                        publishedAt: new Date(video.snippet.publishedAt).toLocaleDateString('ko-KR'),
+                        viewCount: views,
+                        likeCount: likes,
+                        commentCount: comments,
+                        subscriberCount: subscribers,
+                        duration: parseDuration(video.contentDetails.duration),
+                        engagementRate: calculateEngagementRate(views, likes, comments),
+                        channelContribution: calculateChannelContribution(views, subscribers)
+                    };
+                });
+
+                // 5️⃣ 결과 표시
+                displayResults(videos);
+
+            } catch (error) {
+                showMessage(`❌ 오류 발생: ${error.message}`, 'error');
+                clearResults();
+            }
+        }
+
+        // 📅 업로드 날짜 필터에 따른 날짜 계산
+        function getPublishedAfterDate(filter) {
+            const now = new Date();
+            switch(filter) {
+                case 'today':
+                    now.setHours(0, 0, 0, 0);
+                    return now.toISOString();
+                case 'week':
+                    now.setDate(now.getDate() - 7);
+                    return now.toISOString();
+                case 'month':
+                    now.setMonth(now.getMonth() - 1);
+                    return now.toISOString();
+                case 'year':
+                    now.setFullYear(now.getFullYear() - 1);
+                    return now.toISOString();
+                default:
+                    return '2005-01-01T00:00:00Z'; // YouTube 시작일
+            }
+        }
+
+        // ⏱️ YouTube 시간 형식을 "시:분:초" 형식으로 변환
+        function parseDuration(duration) {
+            const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+            const hours = (match[1] || '').replace('H', '') || 0;
+            const minutes = (match[2] || '').replace('M', '') || 0;
+            const seconds = (match[3] || '').replace('S', '') || 0;
+            
+            if (hours > 0) {
+                return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+            return `${minutes}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        // 📊 참여율 계산 (좋아요 + 댓글) / 조회수 * 100
+        function calculateEngagementRate(views, likes, comments) {
+            if (!views || views === 0) return '0.00';
+            const rate = ((likes + comments) / views) * 100;
+            return rate.toFixed(2);
+        }
+
+        // 📈 채널 기여도 계산 = 조회수 / 구독자 수 * 100
+        function calculateChannelContribution(views, subscribers) {
+            if (!subscribers || subscribers === 0) return '0.00';
+            const contribution = (views / subscribers) * 100;
+            return contribution.toFixed(2);
+        }
+
+        // 🔢 숫자 포맷팅 (천 단위 콤마)
+        function formatNumber(num) {
+            return num.toLocaleString('ko-KR');
+        }
+
+        // 📊 결과 표시
+        function displayResults(videos) {
+            const resultsArea = document.getElementById('resultsArea');
+            
+            let html = `
+                <div class="card">
+                    <h2 style="margin-bottom: 20px;">검색 결과: ${videos.length}개</h2>
+                    <div class="results-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>순위</th>
+                                    <th>썸네일</th>
+                                    <th>채널명</th>
+                                    <th>제목</th>
+                                    <th>업로드 날짜</th>
+                                    <th class="text-right">구독자</th>
+                                    <th class="text-right">조회수</th>
+                                    <th class="text-right">채널 기여도</th>
+                                    <th class="text-center">길이</th>
+                                    <th class="text-right">좋아요</th>
+                                    <th class="text-right">댓글</th>
+                                    <th class="text-right">참여율</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            videos.forEach((video, index) => {
+                html += `
+                    <tr>
+                        <td class="number">${index + 1}</td>
+                        <td>
+                            <a href="https://youtube.com/watch?v=${video.id}" target="_blank">
+                                <img src="${video.thumbnail}" alt="${video.title}" class="thumbnail">
+                            </a>
+                        </td>
+                        <td>${video.channelTitle}</td>
+                        <td>
+                            <a href="https://youtube.com/watch?v=${video.id}" target="_blank" class="video-title">
+                                ${video.title}
+                            </a>
+                        </td>
+                        <td>${video.publishedAt}</td>
+                        <td class="text-right number">${formatNumber(video.subscriberCount)}</td>
+                        <td class="text-right number">${formatNumber(video.viewCount)}</td>
+                        <td class="text-right percentage">${video.channelContribution}%</td>
+                        <td class="text-center">${video.duration}</td>
+                        <td class="text-right">${formatNumber(video.likeCount)}</td>
+                        <td class="text-right">${formatNumber(video.commentCount)}</td>
+                        <td class="text-right percentage">${video.engagementRate}%</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            resultsArea.innerHTML = html;
+        }
+
+        // 💬 메시지 표시
+        function showMessage(message, type) {
+            const messageArea = document.getElementById('messageArea');
+            const className = type === 'error' ? 'alert-error' : 'alert-info';
+            messageArea.innerHTML = `<div class="alert ${className}">${message}</div>`;
+        }
+
+        // 🧹 메시지 지우기
+        function clearMessage() {
+            document.getElementById('messageArea').innerHTML = '';
+        }
+
+        // ⏳ 로딩 표시
+        function showLoading() {
+            const resultsArea = document.getElementById('resultsArea');
+            resultsArea.innerHTML = '<div class="card loading">🔍 검색 중입니다... 잠시만 기다려주세요!</div>';
+        }
+
+        // 🧹 결과 지우기
+        function clearResults() {
+            document.getElementById('resultsArea').innerHTML = '';
+        }
+
+        // 📖 초기 안내 메시지 표시
+        window.onload = function() {
+            const resultsArea = document.getElementById('resultsArea');
+            resultsArea.innerHTML = `
+                <div class="instruction-box">
+                    <h3>💡 사용 방법</h3>
+                    <div class="instruction-list">
+                        <p><span class="emoji">1️⃣</span> 위에 YouTube API 키를 입력하세요</p>
+                        <p><span class="emoji">2️⃣</span> 검색어를 입력하세요 (예: "건강정보 시니어")</p>
+                        <p><span class="emoji">3️⃣</span> 필터를 설정하세요 (업로드 날짜, 길이, 정렬 등)</p>
+                        <p><span class="emoji">4️⃣</span> 검색 버튼을 누르세요!</p>
+                        <p style="margin-top: 20px; color: #666; font-size: 13px;">
+                            ✨ 이 도구로 경쟁 채널을 분석하고, 인기 콘텐츠 트렌드를 파악할 수 있어요!
+                        </p>
+                    </div>
+                </div>
+            `;
+        };
+    </script>
+</body>
+</html>
