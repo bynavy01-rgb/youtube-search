@@ -1,8 +1,8 @@
 // Service Worker - PWA 오프라인 지원
 const CACHE_NAME = 'youtube-analyzer-v1';
 const urlsToCache = [
-  '/',
-  '/index.html'
+  '/-/',
+  '/-/index.html'
 ];
 
 // 설치 이벤트
